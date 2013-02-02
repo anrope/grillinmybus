@@ -5,7 +5,7 @@
     "subdomain": "gmb",
     "dependencies": {
         "twitter-stream": "0.3.0",
-        "JSON": "1.0.0"
+        "express": "3.0.0"
     },
     "scripts": {
         "start": "node server.js"
