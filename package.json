@@ -6,7 +6,7 @@
     "dependencies": {
         "twitter-stream": "0.3.0",
         "express": "3.0.0",
-        "xbxmljs: "0.6.1`",
+        "xbxmljs": "0.6.1"
     },
     "scripts": {
         "start": "node server.js"
