@@ -2,11 +2,12 @@ var libxmljs = require("libxmljs");
 var request = require('request');
 
 
-function VehicleLog() {
+function VehicleLog(kind) {
     this.id=null;
     this.longitude=null;
     this.latitude=null;
     this.timestamp=null;
+    this.kind = kind;
 }
 
 module.exports.getBus = function (agency_tag, route_tag, time, cb)
@@ -27,7 +28,7 @@ module.exports.getBus = function (agency_tag, route_tag, time, cb)
                 
                 logs.forEach(function(log) {
                     if(log != null && log.attr('lon')) {
-                        var vehicle = new VehicleLog();
+                        var vehicle = new VehicleLog('bus');
                         vehicle.timestamp = start + parseInt(log.attr('secsSinceReport').value());
                         vehicle.longitude = log.attr('lon').value();
                         vehicle.latitude = log.attr('lat').value();
@@ -50,29 +51,29 @@ module.exports.getTrain = function (train_id, cb)
         request('http://developer.mbta.com/lib/RTCR/RailLine_' + train_id + '.json',
             function (error, response, body) {
                 if (!error && response.statusCode == 200) {
-                console.log('success trains');
-                trains = JSON.parse(body);
-                console.log('number of trains:' + trains.Messages.length);
+                    console.log('success trains');
+                    trains = JSON.parse(body);
+                    console.log('number of trains:' + trains.Messages.length);
 
-                trains.Messages.forEach(function(train_log) {
-                    if(train_log != null) {
-                        var train = new VehicleLog();
-                        train_log.forEach(function(train) {
-                            console.log(train);
-                            if (train.Key == 'TimeStamp')
-                                vehicle.timestamp = parseInt(train.Key);
-                            else if (train.Key == 'Vehicle')
-                                vehicle.id = train.Vehicle;
-                            else if (train.Key == 'Latitude')
-                                vehicle.latitude = train.Latitude;
-                            else if (train.Key == 'Longitude')
-                                vehicle.longitue = train.Longitude;
-                        });
-                        bus_info.push(vehicle);
-                    }
-                });
-                console.log('full bus length:' + bus_info.length);
-                cb(bus_info);
-        }
+                    trains.Messages.forEach(function(train_log) {
+                        if(train_log != null) {
+                            var vehicle = new VehicleLog('train');
+                            train_log.forEach(function(train) {
+                                if (train.Key == 'TimeStamp')
+                                    vehicle.timestamp = parseInt(train.Value);
+                                else if (train.Key == 'Vehicle')
+                                    vehicle.id = train.Value;
+                                else if (train.Key == 'Latitude')
+                                    vehicle.latitude = train.Value;
+                                else if (train.Key == 'Longitude')
+                                    vehicle.longitude = train.Value;
+                            });
+                            console.log('adding train' + JSON.stringify(vehicle))
+                            train_info.push(vehicle);
+                        }
+                    });
+                    console.log('full train length:' + train_info.length);
+                    cb(train_info);
+                }
         });
 }
