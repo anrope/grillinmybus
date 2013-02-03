@@ -19,11 +19,11 @@ module.exports.getBus = function (agency_tag, route_tag, time, cb)
             'command=vehicleLocations&a=' + agency_tag + '&r=' + route_tag  + '&t=' + time,
             function (error, response, body) {
                 if (!error && response.statusCode == 200) {
-                console.log('success' + body);
+                console.log('success buses');
                 
                 var xmlDoc = libxmljs.parseXmlString(body);
                 var logs = xmlDoc.get('//body').childNodes();
-                console.log('length of logs:' + logs.length);
+                console.log('number of logs:' + logs.length);
                 
                 logs.forEach(function(log) {
                     if(log != null && log.attr('lon')) {
@@ -32,9 +32,7 @@ module.exports.getBus = function (agency_tag, route_tag, time, cb)
                         vehicle.longitude = log.attr('lon').value();
                         vehicle.latitude = log.attr('lat').value();
                         vehicle.id = log.attr('id').value();
-                        console.log('vehicle:' + vehicle.id + 'timestamp:' + vehicle.timestamp);
                         bus_info.push(vehicle);
-                        console.log('added to bus length' + bus_info.length);
                     }
                 });
                 console.log('full bus length:' + bus_info.length);
@@ -52,9 +50,9 @@ module.exports.getTrain = function (train_id, cb)
         request('http://developer.mbta.com/lib/RTCR/RailLine_' + train_id + '.json',
             function (error, response, body) {
                 if (!error && response.statusCode == 200) {
-                console.log('success' + body);
+                console.log('success trains');
                 trains = JSON.parse(body);
-                console.log('length of trains:' + trains.Messages.length);
+                console.log('number of trains:' + trains.Messages.length);
 
                 trains.Messages.forEach(function(train_log) {
                     if(train_log != null) {
@@ -71,8 +69,6 @@ module.exports.getTrain = function (train_id, cb)
                                 vehicle.longitue = train.Longitude;
                         });
                         bus_info.push(vehicle);
-                        console.log('vehicle:' + vehicle.id + 'timestamp:' + vehicle.timestamp);
-                        console.log('added to bus length' + bus_info.length);
                     }
                 });
                 console.log('full bus length:' + bus_info.length);
