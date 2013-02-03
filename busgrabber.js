@@ -9,7 +9,7 @@ function VehicleLog() {
     this.timestamp=null;
 }
 
-function getBus(agency_tag, route_tag, time, callback)
+module.exports.getBus = function (agency_tag, route_tag, time, cb)
 {
         var bus_info = [];
         var start = new Date().getTime();
@@ -33,13 +33,50 @@ function getBus(agency_tag, route_tag, time, callback)
                         vehicle.latitude = log.attr('lat').value();
                         vehicle.id = log.attr('id').value();
                         console.log('vehicle:' + vehicle.id + 'timestamp:' + vehicle.timestamp);
-                        bus_info.push(JSON.stringify(vehicle));
+                        bus_info.push(vehicle);
                         console.log('added to bus length' + bus_info.length);
                     }
                 });
                 console.log('full bus length:' + bus_info.length);
-                callback(bus_info);
+                cb(bus_info);
         }
         });
 
+}
+
+module.exports.getTrain = function (train_id, cb)
+{
+        var train_info = [];
+        
+        //make request for bus info
+        request('http://developer.mbta.com/lib/RTCR/RailLine_' + train_id + '.json',
+            function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                console.log('success' + body);
+                trains = JSON.parse(body);
+                console.log('length of trains:' + trains.Messages.length);
+
+                trains.Messages.forEach(function(train_log) {
+                    if(train_log != null) {
+                        var train = new VehicleLog();
+                        train_log.forEach(function(train) {
+                            console.log(train);
+                            if (train.Key == 'TimeStamp')
+                                vehicle.timestamp = parseInt(train.Key);
+                            else if (train.Key == 'Vehicle')
+                                vehicle.id = train.Vehicle;
+                            else if (train.Key == 'Latitude')
+                                vehicle.latitude = train.Latitude;
+                            else if (train.Key == 'Longitude')
+                                vehicle.longitue = train.Longitude;
+                        });
+                        bus_info.push(vehicle);
+                        console.log('vehicle:' + vehicle.id + 'timestamp:' + vehicle.timestamp);
+                        console.log('added to bus length' + bus_info.length);
+                    }
+                });
+                console.log('full bus length:' + bus_info.length);
+                cb(bus_info);
+        }
+        });
 }
