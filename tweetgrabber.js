@@ -12,9 +12,13 @@ function index (req, res) {
   res.send('grillinmybus')
 }
 
-function startStream(buses) {
-  long = parseFloat(buses[0].longitude)
-  lat = parseFloat(buses[0].latitude)
+function startStream(vehicles) {
+  if (vehicles.length == 0) {
+    console.log('no vehicles mutter!');
+    return null;
+  }
+  long = parseFloat(vehicles[0].longitude)
+  lat = parseFloat(vehicles[0].latitude)
   console.log(long + ':' + lat)
   stream = watchloc(long, lat)
 }
@@ -25,6 +29,7 @@ function update (req, res) {
   }
 
   busgrab.getBus('mbta', 87, 0, startStream)
+  //busgrab.getTrain(1, startStream)
   res.send('update');
 }
 
