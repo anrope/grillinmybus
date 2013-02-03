@@ -17,10 +17,11 @@ function startStream(vehicles) {
     console.log('no vehicles mutter!');
     return null;
   }
-  long = parseFloat(vehicles[0].longitude)
+  console.log(JSON.stringify(vehicles[0]))
+  lon = parseFloat(vehicles[0].longitude)
   lat = parseFloat(vehicles[0].latitude)
-  console.log(long + ':' + lat)
-  stream = watchloc(long, lat)
+  console.log(lat + ':' + lon)
+  stream = watchloc(lat, lon)
 }
 
 function update (req, res) {
@@ -28,7 +29,7 @@ function update (req, res) {
     stream.abort()
   }
 
-  busgrab.getBus('mbta', 87, 0, startStream)
+  busgrab.getBus('sf-muni', 'F', 0, startStream);
   //busgrab.getTrain(1, startStream)
   res.send('update');
 }
@@ -55,7 +56,6 @@ function watchloc (lat, lon) {
   stream.on('error', function (error) {
     console.error('Error: ' + error);
   });
-
   return stream
 }
 

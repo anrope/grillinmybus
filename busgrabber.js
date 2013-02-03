@@ -33,6 +33,7 @@ module.exports.getBus = function (agency_tag, route_tag, time, cb)
                         vehicle.longitude = log.attr('lon').value();
                         vehicle.latitude = log.attr('lat').value();
                         vehicle.id = log.attr('id').value();
+                        console.log('adding vehicle:' + JSON.stringify(vehicle));
                         bus_info.push(vehicle);
                     }
                 });
@@ -68,6 +69,7 @@ module.exports.getTrain = function (train_id, cb)
                                 else if (train.Key == 'Longitude')
                                     vehicle.longitude = train.Value;
                             });
+                            console.log('adding vehicle:' + JSON.stringify(vehicle));
                             console.log('adding train' + JSON.stringify(vehicle))
                             train_info.push(vehicle);
                         }

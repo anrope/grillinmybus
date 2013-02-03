@@ -1,4 +1,5 @@
 
+
 <!DOCTYPE>
 <html>
   <head>
@@ -9,6 +10,12 @@
          <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css" />
      <![endif]-->
      <script src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+    <!-- import jQuery from google -->
+    <script 
+      type="text/javascript"  
+      src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js">
+    </script>
+
      <style type="text/css">
      #map { height: 200px; }
      </style>
@@ -16,29 +23,31 @@
   <body>
     <div class="content">
       <div id="map"></div>
+      <div id="result"></div>
     </div>
-    <script>
+
+    <script type="text/javascript">
+    $(document).ready(function(){
+
         var map = L.map('map').setView([42.33433, -71.06152], 13);
         L.tileLayer('http://{s}.tile.cloudmade.com/{key}/22677/256/{z}/{x}/{y}.png', {
             attribution: 'Map data &copy; 2011 OpenStreetMap contributors, Imagery &copy; 2011 CloudMade',
             key: 'BC9A493B41014CAABB98F0471D759707'
         }).addTo(map);
 
-        var LeafIcon = L.Icon.extend({
-            options: {
-                shadowUrl: 'http://leafletjs.com/docs/images/leaf-shadow.png',
-                iconSize:     [38, 95],
-                shadowSize:   [50, 64],
-                iconAnchor:   [22, 94],
-                shadowAnchor: [4, 62],
-                popupAnchor:  [-3, -76]
-            }
+      $('#result').load('http://127.0.0.1:8898/update', function(responseText, textStatus, theRequest) {
+        alert('Load was performed.' + responseText);
+        var busIcon = new L.Icon({iconUrl: '../images/orange_bus.png',
+        iconSize:     [95, 50],
+        shadowSize:   [50, 64],
+        popupAnchor:  [-3, -76],
+        iconAnchor:   [22, 94],
         });
-        var greenIcon = new LeafIcon({iconUrl: 'http://leafletjs.com/docs/images/leaf-green.png'});
-        L.marker([42.33, -71.15], {icon: greenIcon}).bindPopup("I am a green leaf.").addTo(map);
-        var marker = L.marker([42.334, -71.065]).addTo(map);
-        marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+        L.marker([42.33, -71.15], {icon: busIcon}).bindPopup("I am an orange bus, bich!").addTo(map);
 
+      });
+
+    });
     </script>
   </body>
 </html>
