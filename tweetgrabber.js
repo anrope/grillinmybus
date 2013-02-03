@@ -3,7 +3,7 @@
 var config = require('./config');
 var ts = require('twitter-stream');
 var express = require('express');
-
+var busgrab = require('./busgrabber');
 var app = express();
 
 var stream = null;
@@ -12,13 +12,20 @@ function index (req, res) {
   res.send('grillinmybus')
 }
 
+function startStream(buses) {
+  long = parseFloat(buses[0].longitude)
+  lat = parseFloat(buses[0].latitude)
+  console.log(long + ':' + lat)
+  stream = watchloc(long, lat)
+}
+
 function update (req, res) {
   if (stream != null) {
     stream.abort()
   }
-  stream = watchloc(42.370149, -71.078196);
 
-  res.send('update')
+  busgrab.getBus('mbta', 87, 0, startStream)
+  res.send('update');
 }
 
 function watchloc (lat, lon) {
